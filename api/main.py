@@ -23,22 +23,21 @@ def get_now_playing(filename, stream_url, crop_res):
 
     datas = img.getdata() #All pixels
     new_image_data = []
-
     #Looping over first value of rgb colour values and replacing it with black if none of the white shades match
     for item in datas:
         if item[0] not in list(range(195, 256)):
             new_image_data.append((0, 0, 0))
         else:
             new_image_data.append(item)
-
     #Adding new filered black and white data over the original image
     img.putdata(new_image_data)
-    img.filter(ImageFilter.GaussianBlur(radius = 100)) #Blur for more precision in OCR
-
+    
     #img.save("test.png")
+    newimg = img.filter(ImageFilter.GaussianBlur(radius = 1)) #Blur for more precision in OCR
+
     os.remove(filename) #Removing the file we made originally using ffmpeg
 
-    text = pytesseract.image_to_string(img, lang='eng')
+    text = pytesseract.image_to_string(newimg, lang='eng')
     filtered = text[:-1].split("\n")[0]
     return filtered
 
